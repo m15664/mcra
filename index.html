@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>申请成为健身搭子</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B6B',
+                        secondary: '#4ECDC4',
+                        accent: '#FFD166',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .bg-gradient-animated {
+                background: linear-gradient(
+                    45deg,
+                    #FF6B6B,
+                    #FFD166,
+                    #4ECDC4,
+                    #6A0572,
+                    #FF6B6B
+                );
+                background-size: 400% 400%;
+                animation: gradient 15s ease infinite;
+            }
+            .puppy-transition {
+                transition: all 0.3s ease;
+            }
+            .button-grow {
+                transition: transform 0.5s ease;
+            }
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes bounce-question {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .bounce-animation {
+            animation: bounce-question 1s infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-animated min-h-screen flex flex-col items-center justify-center p-4 font-sans">
+    <!-- 标题 -->
+    <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white mb-10 text-center drop-shadow-lg">
+        申请成为健身搭子
+    </h1>
+
+    <!-- 小狗容器 -->
+    <div id="puppy" class="puppy-transition absolute top-1/4 text-5xl text-white">
+        <<i class="fa fa-paw"></</i>
+    </div>
+
+    <!-- 选项容器 -->
+    <div class="flex flex-col md:flex-row gap-6 mt-10 items-center justify-center w-full max-w-md">
+        <button id="accept" class="button-grow bg-primary hover:bg-opacity-80 text-white font-bold py-4 px-8 rounded-full text-xl transition-all shadow-lg">
+            可以
+        </button>
+        <button id="reject" class="button-grow bg-secondary hover:bg-opacity-80 text-white font-bold py-4 px-8 rounded-full text-xl transition-all shadow-lg">
+            不可以
+        </button>
+    </div>
+
+    <!-- 提示信息 -->
+    <div id="message" class="mt-10 text-white text-xl font-bold opacity-0 transition-opacity"></div>
+
+    <script>
+        // 获取元素
+        const acceptBtn = document.getElementById('accept');
+        const rejectBtn = document.getElementById('reject');
+        const messageEl = document.getElementById('message');
+        const puppyEl = document.getElementById('puppy');
+
+        // 初始大小
+        let acceptSize = 1;
+        let rejectSize = 1;
+
+        // 可以按钮点击事件
+        acceptBtn.addEventListener('click', () => {
+            // 小狗微笑
+            puppyEl.innerHTML = '<<i class="fa fa-smile-o"></</i>';
+            puppyEl.classList.add('text-accent');
+            
+            // 显示成功信息
+            messageEl.textContent = '太棒了！我们一起健身吧！';
+            messageEl.classList.add('opacity-100', 'text-accent', 'bounce-animation');
+            
+            // 移除所有事件监听，防止继续交互
+            acceptBtn.removeEventListener('click', () => {});
+            rejectBtn.removeEventListener('click', () => {});
+        });
+
+        // 不可以按钮点击事件
+        rejectBtn.addEventListener('click', () => {
+            // 小狗哭
+            puppyEl.innerHTML = '<<i class="fa fa-frown-o"></</i>';
+            puppyEl.classList.add('text-red-300');
+            
+            // 显示提示信息
+            const messages = [
+                '真的不再想想嘛？',
+                '不考虑一下嘛？',
+                '一起健身很有趣的哦！',
+                '再给个机会呗~',
+                '健身搭子很难找的！'
+            ];
+            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+            messageEl.textContent = randomMsg;
+            messageEl.classList.add('opacity-100', 'bounce-animation');
+            
+            // 调整按钮大小
+            acceptSize *= 1.2;
+            rejectSize *= 0.8;
+            
+            // 应用大小变化
+            acceptBtn.style.transform = `scale(${acceptSize})`;
+            rejectBtn.style.transform = `scale(${rejectSize})`;
+            
+            // 移动小狗到拒绝按钮上方
+            const rejectRect = rejectBtn.getBoundingClientRect();
+            puppyEl.style.left = `${rejectRect.left + rejectRect.width/2 - 20}px`;
+            puppyEl.style.top = `${rejectRect.top - 50}px`;
+            
+            // 3秒后隐藏提示
+            setTimeout(() => {
+                messageEl.classList.remove('opacity-100');
+            }, 2000);
+        });
+
+        // 初始小狗位置（在两个按钮中间）
+        window.addEventListener('load', () => {
+            const acceptRect = acceptBtn.getBoundingClientRect();
+            const rejectRect = rejectBtn.getBoundingClientRect();
+            puppyEl.style.left = `${(acceptRect.right + rejectRect.left)/2 - 20}px`;
+            puppyEl.style.top = `${acceptRect.top - 50}px`;
+        });
+    </script>
+</body>
+</html>
